@@ -13,7 +13,23 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  fullName String? @map("full_name")
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  fullName     String?        @map("full_name")
+  ownerAddress String         @unique @map("owner_address")
+  missionDrafts MissionDraft[]
+}
+
+model MissionDraft {
+  id           Int      @id @default(autoincrement())
+  ownerAddress String   @map("owner_address")
+  title        String
+  data         Json
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  owner User @relation(fields: [ownerAddress], references: [ownerAddress])
+
+  @@index([ownerAddress, updatedAt])
+  @@map("mission_drafts")
 }
